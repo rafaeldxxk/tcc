@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compilador de JavaScript (PT-BR)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1e1e1e;
+            color: white;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            max-width: 1000px;
+            background: #282c34;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .editor { height: 300px; border-radius: 5px; }
+        .output-container { margin-top: 10px; }
+        .output, .console {
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+            min-height: 50px;
+            margin-top: 10px;
+        }
+        .console { background: #ff5555; color: white; display: none; }
+        .buttons { margin-top: 10px; display: flex; gap: 10px; }
+        button {
+            flex: 1; padding: 10px; cursor: pointer; border: none;
+            background-color: #61dafb; color: black; border-radius: 5px;
+            font-size: 16px; font-weight: bold;
+        }
+        button:hover { background-color: #4fa3d1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Compilador de JavaScript (PT-BR)</h2>
+        <textarea id="editor" class="editor"></textarea>
+        <div class="buttons">
+            <button onclick="executar()">Executar</button>
+            <button onclick="limpar()">Limpar</button>
+        </div>
+        <div class="output-container">
+            <h3>Saída:</h3>
+            <div id="output" class="output">Aguardando execução...</div>
+            <h3>Console de Erros:</h3>
+            <div id="console" class="console"></div>
+        </div>
+    </div>
+    
+    <script>
+        const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            mode: "javascript",
+            lineNumbers: true,
+            theme: "dracula"
+        });
+
+        function traduzirParaJS(codigo) {
+            return codigo
+                .replace(/\bfunção\b/g, "function")
+                .replace(/\bse\b/g, "if")
+                .replace(/\bsenão\b/g, "else")
+                .replace(/\bpara\b/g, "for")
+                .replace(/\benquanto\b/g, "while")
+                .replace(/\bretorne\b/g, "return")
+                .replace(/\bvariavel\b/g, "var")
+                .replace(/\bconstante\b/g, "const")
+                .replace(/\bimprima\b/g, "console.log");
+        }
+
+        function executar() {
+            const codigoPT = editor.getValue();
+            const codigoJS = traduzirParaJS(codigoPT);
+            let buffer = "";
+            try {
+                console.clear();
+                const consoleOriginal = console.log;
+                console.log = (mensagem) => { buffer += mensagem + "\n"; };
+                new Function(codigoJS)();
+                console.log = consoleOriginal;
+                document.getElementById("output").innerText = buffer || "Código executado sem saída explícita.";
+                document.getElementById("console").style.display = "none";
+            } catch (erro) {
+                document.getElementById("console").innerText = "Erro: " + erro.message;
+                document.getElementById("console").style.display = "block";
+            }
+        }
+
+        function limpar() {
+            editor.setValue("");
+            document.getElementById("output").innerText = "Aguardando execução...";
+            document.getElementById("console").style.display = "none";
+        }
+    </script>
+</body>
+</html>" rodar
