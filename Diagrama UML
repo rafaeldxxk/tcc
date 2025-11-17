@@ -1,0 +1,33 @@
+@startuml
+title Diagrama UML de exercução
+skinparam componentStyle rectangle
+
+actor "Estudante\n(Ensino Médio)" as Aluno
+actor "Professor\n(Pesquisador)" as Prof
+
+rectangle "Transpilador Web para Pseudocódigo\n(Aplicação Educacional)"  {
+
+  [Interface Web\n(HTML + CSS + JS)] as UI
+  [Editor de Código\n(GitHub)] as Editor
+  [Módulo de Tradução\nPT-BR → JavaScript\n(traduzirParaJS)] as Tradutor
+  [Módulo de Execução\nSandbox JavaScript] as Executor
+  [Armazenamento de Códigos\nReplit / GitHub Pages] as Storage
+  [Módulo de Coleta de Dados\nQuestionários / Logs] as Pesquisa
+}
+
+' --- Interações dos atores com o sistema ---
+Aluno  --> UI       : escreve pseudocódigo\nexecuta exemplos
+Prof   --> UI       : demonstra em aula\nconfigura exercícios
+Prof   --> Pesquisa : analisa respostas\n e resultados
+
+' --- Relações internas do sistema ---
+UI      --> Editor   : digitação do pseudocódigo PT-BR
+Editor  --> Tradutor : enviar texto\npara tradução
+Tradutor --> Executor: código JS traduzido
+Executor --> UI      : saída / resultados\n(erros, prints)
+
+Editor  --> Storage  : salvar / carregar códigos
+
+UI      --> Pesquisa : registrar uso\n(para avaliação do TCC)
+
+@enduml
