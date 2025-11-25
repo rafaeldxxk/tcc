@@ -28,6 +28,6 @@ Executor --> UI      : saída / resultados\n(erros, prints)
 
 Editor  --> Storage  : salvar / carregar códigos
 
-UI      --> Pesquisa : registrar uso\n(para avaliação do TCC)
+UI      --> Pesquisa : registrar uso\n
 
 @enduml
