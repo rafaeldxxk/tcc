@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+       <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -72,17 +73,39 @@
             theme: "dracula"
         });
 
+                // Evita substituições dentro de strings ("..." ou '...')
         function traduzirParaJS(codigo) {
-            return codigo
-                .replace(/\bfunção\b/g, "function")
-                .replace(/\bse\b/g, "if")
-                .replace(/\bsenão\b/g, "else")
-                .replace(/\bpara\b/g, "for")
-                .replace(/\benquanto\b/g, "while")
-                .replace(/\bretorne\b/g, "return")
-                .replace(/\bvariavel\b/g, "var")
-                .replace(/\bconstante\b/g, "const")
-                .replace(/\bimprima\b/g, "console.log");
+                        //    - permite "senão" e também "senao"
+            //    - permite "função" e também "funcao"
+            codigo = codigo.replace(/senão/gi, "senao").replace(/função/gi, "funcao");
+
+            // 2) Extrai strings para não sofrerem substituição
+            const strings = [];
+            // Captura strings simples e duplas, incluindo escapes
+            codigo = codigo.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, (match) => {
+                strings.push(match);
+                return `__STRING_${strings.length - 1}__`;
+            });
+
+            // 3) Faz as substituições apenas fora das strings
+            codigo = codigo
+                .replace(/\bfuncao\b/gi, "function")
+                .replace(/\bse\b/gi, "if")
+                .replace(/\bsenao\b/gi, "else")
+                .replace(/\bpara\b/gi, "for")
+                .replace(/\benquanto\b/gi, "while")
+                .replace(/\bretorne\b/gi, "return")
+                .replace(/\bvariavel\b/gi, "var")
+                .replace(/\bconstante\b/gi, "const")
+                .replace(/\bimprima\b/gi, "console.log")
+
+                // garante "} senao {" -> "} else {"
+                .replace(/}\s*else\s*{/gi, "} else {");
+
+            // 4) Restaura strings originais
+            codigo = codigo.replace(/__STRING_(\d+)__/g, (_, index) => strings[Number(index)]);
+
+            return codigo;
         }
 
         function executar() {
@@ -111,3 +134,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
